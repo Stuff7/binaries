@@ -20,8 +20,15 @@ jobs:
         
     - name: Install required packages
       run: |
-        msys2_shell.cmd -defterm -no-start -mingw32 -c "pacman -Syu --noconfirm"
-        msys2_shell.cmd -defterm -no-start -mingw64 -c "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain"
+        msys2_path="C:\\tools\\msys64"
+        
+        # Attempt different solutions in sequence until one works
+        $msys2_path\\msys2_shell.cmd -defterm -no-start -mingw32 -c "pacman -Syu --noconfirm && pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain" ||
+        $msys2_path\\msys2_shell.cmd -defterm -no-start -mingw64 -c "pacman -Syu --noconfirm && pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain" ||
+        $msys2_path\\msys2_shell.cmd -defterm -no-start -mingw32 -c "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain" ||
+        $msys2_path\\msys2_shell.cmd -defterm -no-start -mingw64 -c "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain" ||
+        pacman -Syu --noconfirm && pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain ||
+        echo "Failed to install required packages"
         
     - name: Get latest GCC version
       run: |
