@@ -18,6 +18,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y mingw-w64
         
+    - name: List contents of /usr/bin
+      run: |
+        ls -la /usr/bin
+        
     - name: Create binaries branch
       run: |
         git config user.name "GitHub Actions"
@@ -25,14 +29,10 @@ jobs:
         git checkout --orphan binaries
         git rm -rf .
         
-    - name: Determine MinGW-w64 installation path
-      run: |
-        mingw_path=$(dirname "$(which x86_64-w64-mingw32-gcc)")
-        echo "MinGW-w64 installed at: $mingw_path"
-        
     - name: Copy GCC binaries
       run: |
-        cp -r "$mingw_path"/* .
+        mingw_path="/usr"
+        cp -r "$mingw_path"/*-w64-mingw32/bin/* .
         git add .
         git commit -m "Add GCC binaries from MinGW-w64"
         git push origin binaries
