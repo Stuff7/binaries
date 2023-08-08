@@ -27,11 +27,12 @@ jobs:
         
     - name: Determine MinGW-w64 installation path
       run: |
-        echo "MinGW-w64 installed at: $(realpath /usr/bin/x86_64-w64-mingw32)"
+        mingw_path=$(dirname "$(which x86_64-w64-mingw32-gcc)")
+        echo "MinGW-w64 installed at: $mingw_path"
         
     - name: Copy GCC binaries
       run: |
-        cp -r "$(realpath /usr/bin/x86_64-w64-mingw32/)"/* .
+        cp -r "$mingw_path"/* .
         git add .
         git commit -m "Add GCC binaries from MinGW-w64"
         git push origin binaries
