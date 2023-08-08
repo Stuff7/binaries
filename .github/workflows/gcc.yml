@@ -1,0 +1,33 @@
+name: Copy GCC Binaries to Binaries Branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Set up MinGW-w64
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mingw-w64
+        
+    - name: Create binaries branch
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git checkout --orphan binaries
+        git rm -rf .
+        
+    - name: Copy GCC binaries
+      run: |
+        cp -r /usr/bin/x86_64-w64-mingw32/* .
+        git add .
+        git commit -m "Add GCC binaries from MinGW-w64"
+        git push origin binaries
