@@ -16,7 +16,7 @@ jobs:
     - name: Set up MSYS2
       run: |
         choco install msys2 -y
-        RefreshEnv
+        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         $msys2_path = "${env:ChocolateyInstall}\lib\msys2\tools\msys64"
         $msys2_path\usr\bin\bash.exe -lc "echo MSYS2 installed at $msys2_path"
         
