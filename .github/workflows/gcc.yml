@@ -25,9 +25,13 @@ jobs:
         git checkout --orphan binaries
         git rm -rf .
         
+    - name: Determine MinGW-w64 installation path
+      run: |
+        echo "MinGW-w64 installed at: $(realpath /usr/bin/x86_64-w64-mingw32)"
+        
     - name: Copy GCC binaries
       run: |
-        cp -r /usr/bin/x86_64-w64-mingw32/* .
+        cp -r "$(realpath /usr/bin/x86_64-w64-mingw32/)"/* .
         git add .
         git commit -m "Add GCC binaries from MinGW-w64"
         git push origin binaries
