@@ -16,7 +16,7 @@ jobs:
     - name: Set up MSYS2
       run: |
         choco install msys2 -y
-        refreshenv
+        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         
     - name: Install required packages
       run: |
@@ -51,6 +51,7 @@ jobs:
       run: |
         cd "$install_dir"
         tar czf gcc_binaries.tar.gz *
+        
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
         git checkout --orphan binaries
