@@ -32,7 +32,7 @@ jobs:
     - name: Copy GCC binaries
       run: |
         mingw_path="/usr"
-        cp -r "$mingw_path"/*-w64-mingw32/bin/* .
+        cp -rn "$mingw_path"/*-w64-mingw32/bin/* .
         git add .
         git commit -m "Add GCC binaries from MinGW-w64"
         git push origin binaries
