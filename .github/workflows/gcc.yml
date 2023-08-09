@@ -25,6 +25,8 @@ jobs:
         run: |
           mkdir binaries
           cp "C:\msys64\mingw64\*" binaries/
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git checkout --orphan binaries
           git rm -rf .
           mv binaries/* .
