@@ -1,4 +1,4 @@
-name: Install GCC and Create Binaries Branch
+name: Compile and Push GCC for Windows
 
 on:
   push:
@@ -7,37 +7,42 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+    - name: Create binaries branch
+      run: |
+        git checkout -b binaries
+        git push origin binaries
 
-      - name: Install GCC
-        run: |
-          echo "BEFORE INSTALL"
-          tree /f "C:\msys64\mingw64"
-          choco install mingw -y --force --params "/InstallationPath:$GITHUB_WORKSPACE"
-          echo "AFTER INSTALL"
-          tree /f $GITHUB_WORKSPACE
-
-      - name: Copy binaries
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git checkout -b binaries
-          # mkdir temp
-          # robocopy "C:\msys64\mingw64" "temp" /E
-          # mv temp/* .
-          echo "BEFORE ADD"
-          echo "ROOT"
-          tree /f
-          echo "BIN"
-          tree /f bin
-          git status
-          git add -A
-          echo "AFTER ADD"
-          git status
-          git commit -m "Add GCC binaries"
-          git status
-          git push -f origin binaries
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install build-essential
+        
+    - name: Compile GCC for Windows
+      run: |
+        git clone https://gcc.gnu.org/git/gcc.git
+        cd gcc
+        ./contrib/download_prerequisites
+        mkdir build
+        cd build
+        ../configure --target=x86_64-w64-mingw32 --enable-languages=c,c++ --disable-multilib
+        make -j$(nproc)
+        cp x86_64-w64-mingw32/bin/gcc.exe ../..
+        cd ../..
+        rm -rf gcc
+        
+    - name: Push compiled binary
+      run: |
+        git add gcc.exe
+        git commit -m "Add compiled GCC for Windows"
+        git push --force origin binaries
