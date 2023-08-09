@@ -23,15 +23,18 @@ jobs:
 
       - name: Create Binaries Branch
         run: |
-          mkdir temp
-          cp "C:\msys64\mingw64\*" temp/
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b binaries
+          echo MOVED TO BINARIES BRANCH
+          mkdir temp
+          cp "C:\msys64\mingw64\*" temp/
           mv temp/* .
+          echo IN BINARIES BRANCH BEFORE ADD
           dir
           git status
           git add .
+          echo IN BINARIES BRANCH AFTER ADD
           git status
           git commit -m "Add GCC binaries"
           git status
