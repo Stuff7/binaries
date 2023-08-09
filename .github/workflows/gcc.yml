@@ -21,12 +21,12 @@ jobs:
       - name: Get MinGW Installation Path
         id: mingw-path
         run: |
-          echo ::set-output name=path::$(for /f %%i in ('where gcc') do @echo %%~dpi)
+          echo "::set-output name=path::$(for /f %%i in ('where gcc') do @echo %%~dpi)"
 
       - name: Create Binaries Branch
         run: |
           mkdir binaries
-          copy ${{ steps.mingw-path.outputs.path }}\bin\* binaries\
+          copy ${{ steps.mingw-path.outputs.path }}bin\* binaries\
           git checkout --orphan binaries
           git rm -rf .
           mv binaries/* .
