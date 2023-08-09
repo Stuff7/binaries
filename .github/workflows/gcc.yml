@@ -1,4 +1,4 @@
-name: Build Windows GCC Binaries
+name: Copy GCC Binaries to Binaries Branch
 
 on:
   push:
@@ -7,54 +7,32 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
     
-    - name: Set up MSYS2
+    - name: Set up MinGW-w64
       run: |
-        choco install msys2 -y
-        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+        sudo apt-get update
+        sudo apt-get install -y mingw-w64
         
-    - name: Install required packages
+    - name: List contents of /usr/bin
       run: |
-        choco install base-devel mingw-w64-x86_64-toolchain -y
+        ls -la /usr/bin
         
-    - name: Get latest GCC version
+    - name: Create binaries branch
       run: |
-        latest_gcc_version=$(curl -s https://api.github.com/repos/gcc-mirror/gcc/releases/latest | jq -r '.tag_name' | sed 's/gcc-//')
-        echo "Latest GCC version: $latest_gcc_version"
-        
-    - name: Build GCC for Windows
-      run: |
-        gcc_dir="gcc-$latest_gcc_version"
-        install_dir="/mingw64"
-        
-        mkdir "$HOME/src"
-        cd "$HOME/src"
-        curl -L "https://ftp.gnu.org/gnu/gcc/gcc-$latest_gcc_version/gcc-$latest_gcc_version.tar.xz" -o "$gcc_dir.tar.xz"
-        tar -xJf "$gcc_dir.tar.xz"
-        
-        cd "$gcc_dir"
-        ./contrib/download_prerequisites
-        mkdir build
-        cd build
-        ../configure --target=x86_64-w64-mingw32 --disable-bootstrap --enable-languages=c,c++
-        make -j$(nproc)
-        make install DESTDIR="$install_dir"
-        
-    - name: Archive and upload GCC binaries
-      run: |
-        cd "$install_dir"
-        tar czf gcc_binaries.tar.gz *
-        
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
         git checkout --orphan binaries
         git rm -rf .
-        mv gcc_binaries.tar.gz ..
-        git add ..
-        git commit -m "Add compiled GCC binaries for Windows"
+        
+    - name: Copy GCC binaries
+      run: |
+        mingw_path="/usr/x86_64-w64-mingw32/bin"
+        cp -f "$mingw_path"/{gcc,g++,gfortran} .
+        git add .
+        git commit -m "Add GCC binaries from MinGW-w64"
         git push --force origin binaries
