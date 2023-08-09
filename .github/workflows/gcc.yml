@@ -21,8 +21,6 @@ jobs:
     - name: Create binaries branch
       run: |
         git checkout -b binaries
-        git pull origin binaries --allow-unrelated-histories
-        git push origin binaries
 
     - name: Install dependencies
       run: |
