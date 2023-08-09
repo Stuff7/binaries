@@ -17,7 +17,7 @@ jobs:
         run: |
           echo "BEFORE INSTALL"
           tree /f "C:\msys64\mingw64"
-          choco install mingw -y --params "/InstallationPath:$GITHUB_WORKSPACE"
+          choco install mingw -y --force --params "/InstallationPath:$GITHUB_WORKSPACE"
           echo "AFTER INSTALL"
           tree /f $GITHUB_WORKSPACE
 
