@@ -3,7 +3,7 @@ name: Copy GCC Binaries to Binaries Branch
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
