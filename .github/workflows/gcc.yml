@@ -13,20 +13,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Print Possible Install Paths
+      - name: Copy binaries
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b binaries
-          echo MOVED TO BINARIES BRANCH
           mkdir temp
           cp -r "C:\msys64\mingw64\*" temp/
           mv temp/* .
-          echo IN BINARIES BRANCH BEFORE ADD
-          dir
+          echo "BEFORE ADD"
+          dir bin
           git status
           git add -A
-          echo IN BINARIES BRANCH AFTER ADD
+          echo "AFTER ADD"
           git status
           git commit -m "Add GCC binaries"
           git status
