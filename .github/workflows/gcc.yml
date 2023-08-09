@@ -10,11 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Git
-      run: |
-        git config user.email "action@github.com"
-        git config user.name "GitHub Action"
-
     - name: Checkout code
       uses: actions/checkout@v3
       
@@ -28,6 +23,8 @@ jobs:
 
     - name: Push MinGW-w64
       run: |
+        git config user.email "action@github.com"
+        git config user.name "GitHub Action"
         git checkout -b binaries
         git add mingw-w64
         git commit -m "Add MinGW-w64"
