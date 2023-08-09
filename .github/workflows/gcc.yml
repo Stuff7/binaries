@@ -32,7 +32,16 @@ jobs:
     - name: Copy GCC binaries
       run: |
         mingw_path="/usr"
+        
+        # Copy each binary, resolving symbolic links
         cp -Rn "$mingw_path"/*-w64-mingw32/bin/* .
+        for file in *; do
+          if [ -L "$file" ]; then
+            target=$(readlink "$file")
+            cp -Rn "$target" "$file"
+          fi
+        done
+        
         git add .
         git commit -m "Add GCC binaries from MinGW-w64"
         git push --force origin binaries
