@@ -18,9 +18,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y mingw-w64
         
-    - name: List contents of /usr/bin
+    - name: Determine GCC binary path
       run: |
-        ls -la /usr/bin
+        gcc_path=$(dirname "$(which x86_64-w64-mingw32-gcc)")
+        echo "GCC binaries located at: $gcc_path"
         
     - name: Create binaries branch
       run: |
@@ -31,8 +32,7 @@ jobs:
         
     - name: Copy GCC binaries
       run: |
-        mingw_path="/usr/x86_64-w64-mingw32/bin"
-        cp -f "$mingw_path"/{gcc,g++,gfortran} .
+        cp -r "$gcc_path"/*-w64-mingw32/bin/{gcc,g++,gfortran} .
         git add .
         git commit -m "Add GCC binaries from MinGW-w64"
         git push --force origin binaries
