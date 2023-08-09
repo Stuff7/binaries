@@ -16,12 +16,15 @@ jobs:
     - name: Set up MSYS2
       run: |
         choco install msys2 -y
+        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         
     - name: Install required packages
       run: |
-        msys2_path=$(choco list --local-only msys2)
-        $msys2_path\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-        $msys2_path\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain"
+        msys2_path=$(choco list --local-only msys2 | Out-String).Trim()
+        echo "MSYS2 path: $msys2_path"
+        export MSYS2_PATH="$msys2_path"
+        $MSYS2_PATH\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
+        $MSYS2_PATH\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain"
         
     - name: Get latest GCC version
       run: |
