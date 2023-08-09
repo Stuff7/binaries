@@ -16,7 +16,7 @@ jobs:
       - name: Install GCC
         run: |
           choco install mingw -y
-          export PATH="/c/tools/mingw64/bin:$PATH"
+          set PATH="/c/tools/mingw64/bin:$PATH"
 
       - name: Create Binaries Branch
         run: |
