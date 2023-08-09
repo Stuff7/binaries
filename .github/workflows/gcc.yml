@@ -24,9 +24,9 @@ jobs:
           mv temp/* .
           echo "BEFORE ADD"
           echo "ROOT"
-          dir
+          tree /f
           echo "BIN"
-          dir bin
+          tree /f bin
           git status
           git add -A
           echo "AFTER ADD"
