@@ -15,14 +15,6 @@ jobs:
 
       - name: Print Possible Install Paths
         run: |
-          echo "Checking possible MinGW installation paths:"
-          dir C:\tools || true
-          dir C:\msys64 || true
-          dir C:\msys64\mingw64 || true
-          dir C:\ || true
-
-      - name: Create Binaries Branch
-        run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b binaries
@@ -33,10 +25,7 @@ jobs:
           echo IN BINARIES BRANCH BEFORE ADD
           dir
           git status
-
-          find . -type d -empty -exec touch {}/.gitkeep \;
-
-          git add .
+          git add -A  # This will stage all changes, including directories
           echo IN BINARIES BRANCH AFTER ADD
           git status
           git commit -m "Add GCC binaries"
