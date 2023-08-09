@@ -20,7 +20,7 @@ jobs:
         
     - name: Determine GCC binary path
       run: |
-        gcc_path=$(dirname "$(which x86_64-w64-mingw32-gcc)")
+        gcc_path="/usr/x86_64-w64-mingw32/bin"
         echo "GCC binaries located at: $gcc_path"
         
     - name: Create binaries branch
@@ -32,7 +32,7 @@ jobs:
         
     - name: Copy GCC binaries
       run: |
-        cp -r "$gcc_path"/*-w64-mingw32/bin/{gcc,g++,gfortran} .
+        cp -r "$gcc_path"/{gcc,g++,gfortran} .
         git add .
         git commit -m "Add GCC binaries from MinGW-w64"
         git push --force origin binaries
