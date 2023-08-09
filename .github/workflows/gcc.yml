@@ -27,7 +27,7 @@ jobs:
           cp "C:\msys64\mingw64\*" temp/
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git checkout --orphan binaries
+          git checkout -b binaries
           mv temp/* .
           dir
           git status
