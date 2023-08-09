@@ -1,4 +1,4 @@
-name: Download and Push MinGW-w64
+name: Download and Push GCC for Windows
 
 on:
   push:
@@ -12,23 +12,19 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
-    - name: Extract MinGW-w64
-      run: |
-        mkdir mingw-w64
-        cd mingw-w64
-        wget https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-x86_64-8.0.0-release-posix-seh-rt_v6-rev0.7z
-        7z x mingw-w64-x86_64-8.0.0-release-posix-seh-rt_v6-rev0.7z
-        cd ..
 
-    - name: Set up Git
+    - name: Download MinGW-w64 GCC
       run: |
         git config user.email "action@github.com"
         git config user.name "GitHub Action"
+        
         git checkout -b binaries
+        
+        wget https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/rubenvb/gcc-10-branch-w64/gcc-10.2.0-branch-x86_64-win32-seh-rubenvb.7z/download -O gcc.7z
+        7z x gcc.7z -ogcc
+        rm gcc.7z
 
-    - name: Push MinGW-w64
-      run: |
-        git add mingw-w64
-        git commit -m "Add MinGW-w64"
+        git add gcc
+        git commit -m "Add MinGW-w64 GCC binary"
+        
         git push --force origin binaries
