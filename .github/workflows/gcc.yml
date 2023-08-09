@@ -21,15 +21,10 @@ jobs:
           dir C:\msys64\mingw64 || true
           dir C:\ || true
 
-      - name: Install GCC
-        run: |
-          choco install mingw -y
-          set PATH="C:\tools\msys64\mingw64\bin;%PATH%"
-
       - name: Create Binaries Branch
         run: |
           mkdir binaries
-          cp C:/tools/msys64/mingw64/bin/* binaries/
+          cp "C:\msys64\mingw64\*" binaries/
           git checkout --orphan binaries
           git rm -rf .
           mv binaries/* .
