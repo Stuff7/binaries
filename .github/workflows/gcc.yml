@@ -16,12 +16,12 @@ jobs:
       - name: Install GCC
         run: |
           choco install mingw -y
-          set PATH="%RUNNER_WORKSPACE%\tools\mingw64\bin;%PATH%"
+          set PATH="${{ runner.workspace }}/tools/mingw64/bin;%PATH%"
 
       - name: Create Binaries Branch
         run: |
           mkdir binaries
-          cp %RUNNER_WORKSPACE%\tools\mingw64\bin\* binaries\
+          cp "${{ runner.workspace }}/tools/mingw64/bin/*" binaries/
           git checkout --orphan binaries
           git rm -rf .
           mv binaries/* .
