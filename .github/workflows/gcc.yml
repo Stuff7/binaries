@@ -30,6 +30,9 @@ jobs:
           git checkout --orphan binaries
           mv temp/* .
           dir
+          git status
           git add .
+          git status
           git commit -m "Add GCC binaries"
+          git status
           git push -f origin binaries
