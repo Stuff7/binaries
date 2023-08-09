@@ -13,9 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Install GCC
+        run: |
+          echo "BEFORE INSTALL"
+          tree /f "C:\msys64\mingw64"
+          choco install mingw -y
+          echo "AFTER INSTALL"
+          tree /f "C:\msys64\mingw64"
+
       - name: Copy binaries
         run: |
-          tree /f "C:\msys64\mingw64"
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b binaries
