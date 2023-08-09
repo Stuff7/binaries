@@ -22,7 +22,12 @@ jobs:
           robocopy "C:\msys64\mingw64" "temp" /E
           mv temp/* .
           echo "BEFORE ADD"
+          echo "ROOT"
+          dir
+          echo "BIN"
           dir bin
+          echo "ETC"
+          dir etc
           git status
           git add -A
           echo "AFTER ADD"
