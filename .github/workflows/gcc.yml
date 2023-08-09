@@ -10,25 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
     - name: Set up Git
       run: |
         git config user.email "action@github.com"
         git config user.name "GitHub Action"
 
-    - name: Create binaries branch
-      run: |
-        git checkout -b binaries
-        git push origin binaries
-
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
     - name: Extract MinGW-w64
       run: |
-        tar -xjf mingw-w64-v8.0.0.tar.bz2 -C mingw-w64
+        mkdir mingw-w64
+        cd mingw-w64
+        wget https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v8.0.0.tar.bz2
+        tar -xjf mingw-w64-v8.0.0.tar.bz2
+        cd ..
 
     - name: Push MinGW-w64
       run: |
+        git checkout -b binaries
         git add mingw-w64
         git commit -m "Add MinGW-w64"
-        git push origin binaries
+        git push --force origin binaries
