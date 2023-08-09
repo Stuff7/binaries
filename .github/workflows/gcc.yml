@@ -17,16 +17,11 @@ jobs:
       run: |
         git config user.email "action@github.com"
         git config user.name "GitHub Action"
-        
-    - name: Delete existing binaries branch if exists
-      run: |
-        if git show-ref --verify --quiet refs/heads/binaries; then
-          git push origin --delete binaries
-        fi
 
     - name: Create binaries branch
       run: |
         git checkout -b binaries
+        git pull origin binaries --allow-unrelated-histories
         git push origin binaries
 
     - name: Install dependencies
