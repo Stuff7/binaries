@@ -1,4 +1,4 @@
-name: Build GCC for Windows
+name: Install MSYS2 and Push Binaries
 
 on:
   push:
@@ -7,32 +7,29 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
+    
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y build-essential flex bison
-
-    - name: Build GCC
+      uses: actions/checkout@v3
+    
+    - name: Download MSYS2 Installer
       run: |
-        git clone https://github.com/gcc-mirror/gcc.git
-        cd gcc
-        ./contrib/download_prerequisites
-        mkdir build
-        cd build
-        ../configure --target=x86_64-w64-mingw32 --enable-targets=all --enable-languages=c,c++
-        make -j$(nproc)
-        cd ../..
-
-    - name: Push binaries
+        $url = 'https://github.com/msys2/msys2-installer/releases/download/2023-07-18/msys2-x86_64-20230718.exe'
+        Invoke-WebRequest -Uri $url -OutFile 'msys2-installer.exe'
+    
+    - name: Install MSYS2
       run: |
-        git config user.email "action@github.com"
+        .\msys2-installer.exe in --confirm-command --accept-messages --root $PWD
+    
+    - name: Set up Git
+      run: |
         git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+    
+    - name: Create Binaries Branch
+      run: |
         git checkout -b binaries
-        mv gcc/build/x86_64-w64-mingw32/bin/* .
         git add .
-        git commit -m "Add GCC binaries for Windows"
-        git push --force origin binaries
+        git commit -m "Add MSYS2 installation"
+        git push origin binaries --force
