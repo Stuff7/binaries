@@ -11,7 +11,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
     
     - name: Download MSYS2 Installer
       run: |
@@ -22,6 +22,10 @@ jobs:
       run: |
         .\msys2-installer.exe in --confirm-command --accept-messages --root $PWD
     
+    - name: Run MSYS2 Command
+      run: |
+        .\msys2_shell.cmd -defterm -no-start -mingw64 -here -c "pacman -S mingw-w64-ucrt-x86_64-gcc"
+    
     - name: Set up Git
       run: |
         git config user.name "GitHub Action"
@@ -31,5 +35,5 @@ jobs:
       run: |
         git checkout -b binaries
         git add .
-        git commit -m "Add MSYS2 installation"
+        git commit -m "Add MSYS2 installation and gcc"
         git push origin binaries --force
