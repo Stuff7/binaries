@@ -15,7 +15,7 @@ jobs:
 
       - name: Copy binaries
         run: |
-          dir "C:\msys64\mingw64" /S
+          tree /f "C:\msys64\mingw64"
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b binaries
