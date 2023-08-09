@@ -16,17 +16,12 @@ jobs:
       - name: Install GCC
         run: |
           choco install mingw -y
-          set PATH="C:\tools\mingw64\bin;%PATH%"
-
-      - name: Get MinGW Installation Path
-        id: mingw-path
-        run: |
-          echo "::set-output name=path::$(for /f %%i in ('where gcc') do @echo %%~dpi)"
+          set PATH="%RUNNER_WORKSPACE%\tools\mingw64\bin;%PATH%"
 
       - name: Create Binaries Branch
         run: |
           mkdir binaries
-          copy ${{ steps.mingw-path.outputs.path }}bin\* binaries\
+          cp %RUNNER_WORKSPACE%\tools\mingw64\bin\* binaries\
           git checkout --orphan binaries
           git rm -rf .
           mv binaries/* .
