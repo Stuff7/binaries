@@ -25,11 +25,17 @@ jobs:
         run: |
           mkdir binaries
           cp "C:\msys64\mingw64\*" binaries/
+          dir
+          dir binaries
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout --orphan binaries
           git rm -rf .
+          dir
+          dir binaries
           mv binaries/* .
+          dir
+          dir binaries
           git add .
           git commit -m "Add GCC binaries"
           git push -f origin binaries
