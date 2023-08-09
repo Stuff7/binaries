@@ -28,12 +28,14 @@ jobs:
           git checkout -b binaries
           echo MOVED TO BINARIES BRANCH
           mkdir temp
-          xcopy "C:\msys64\mingw64\*" temp /E /I
-          mv temp\* .
-          rmdir /S /Q temp
+          cp "C:\msys64\mingw64\*" temp/
+          mv temp/* .
           echo IN BINARIES BRANCH BEFORE ADD
           dir
           git status
+
+          find . -type d -empty -exec touch {}/.gitkeep \;
+
           git add .
           echo IN BINARIES BRANCH AFTER ADD
           git status
