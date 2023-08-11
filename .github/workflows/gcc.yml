@@ -21,11 +21,11 @@ jobs:
     - name: Download and build clang
       run: |
         LLVM_INSTALL_PATH=~/llvm
-        LLVM_VERSION=13.0.0
+        LLVM_VERSION=16.0.6
         NUM_THREADS=$(nproc)  # Get number of CPU cores
 
         # Download LLVM/Clang source code
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/llvm-project-$LLVM_VERSION.tar.xz -O llvm.tar.xz
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/llvm-project-$LLVM_VERSION.src.tar.xz -O llvm.tar.xz
         mkdir llvm
         tar -xf llvm.tar.xz -C llvm --strip-components=1
 
