@@ -16,19 +16,24 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake curl
+        sudo apt-get install -y cmake ninja-build curl
 
-    - name: Download and build clang
+    - name: Download and build LLVM/Clang
       run: |
         LLVM_INSTALL_PATH=~/llvm
         LLVM_VERSION=16.0.6
         NUM_THREADS=$(nproc)  # Get number of CPU cores
 
-        # Configure and build LLVM/Clang
-        mkdir llvm-build
-        cd llvm-build
-        cmake -DLLVM_ENABLE_PROJECTS='clang' -DCMAKE_INSTALL_PREFIX=$LLVM_INSTALL_PATH ../llvm
-        cmake --build . --target install -j $NUM_THREADS
+        # Clone LLVM repository
+        git clone https://github.com/llvm/llvm-project.git
+        cd llvm-project
+
+        # Configure and build LLVM and Clang
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_INSTALL_PREFIX=$LLVM_INSTALL_PATH ../llvm
+        ninja
+        ninja install
 
         echo "LLVM/Clang $LLVM_VERSION has been successfully built and installed to $LLVM_INSTALL_PATH"
 
