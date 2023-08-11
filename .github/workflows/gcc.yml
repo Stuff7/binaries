@@ -16,7 +16,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake ninja-build curl
+        sudo apt-get install -y cmake ninja-build curl python3-distutils
 
     - name: Download and build LLVM/Clang
       run: |
@@ -28,10 +28,12 @@ jobs:
         git clone https://github.com/llvm/llvm-project.git
         cd llvm-project
 
-        # Configure and build LLVM and Clang
+        # Create build directory
         mkdir build
         cd build
-        cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_INSTALL_PREFIX=$LLVM_INSTALL_PATH ../llvm
+
+        # Configure and build LLVM and Clang
+        cmake -GNinja -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$LLVM_INSTALL_PATH ../llvm
         ninja
         ninja install
 
