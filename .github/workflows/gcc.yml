@@ -16,7 +16,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake curl p7zip-full
+        sudo apt-get install -y cmake curl
 
     - name: Download and build clang
       run: |
@@ -25,9 +25,9 @@ jobs:
         NUM_THREADS=$(nproc)  # Get number of CPU cores
 
         # Download LLVM/Clang source code
-        curl -L https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/llvm-project-$LLVM_VERSION.tar.xz -o llvm.tar.xz
-        7z x llvm.tar.xz
-        mv llvm-project-$LLVM_VERSION llvm
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/llvm-project-$LLVM_VERSION.tar.xz -O llvm.tar.xz
+        mkdir llvm
+        tar -xf llvm.tar.xz -C llvm --strip-components=1
 
         # Build LLVM/Clang
         cd llvm
