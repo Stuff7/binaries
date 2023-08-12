@@ -29,12 +29,8 @@ jobs:
                      --target=x86_64-w64-mingw32 --with-gmp=/usr/include --with-mpfr=/usr/include --with-mpc=/usr/include
         make -j$(nproc) all-gcc
         make install-gcc
-        echo "DEBUG"
-        ls -la $(pwd)/../install/bin  # Debug line
-        GCC_BINARY=$(find $(pwd)/../install/bin -name "gcc" -type f)
-        echo "DEBUG"
-        echo "GCC_BINARY: $GCC_BINARY"  # Debug line
-        cp $(find $(pwd)/../install/bin -name "gcc" -type f) ../../gcc.exe
+        GCC_BINARY=$(find $(pwd)/.. -name "gcc.exe" -type f)
+        cp "$GCC_BINARY" ../../gcc.exe
         cd ../..
         rm -rf gcc
 
