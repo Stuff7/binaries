@@ -31,7 +31,7 @@ jobs:
         make install-gcc
         echo "DEBUG"
         ls ../install/bin
-        cp -r ../install/bin/* ../../gcc.exe
+        cp -r ../install/bin/* ../..
         cd ../..
         rm -rf gcc
 
