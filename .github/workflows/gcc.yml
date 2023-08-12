@@ -43,6 +43,6 @@ jobs:
     - name: Commit and push binaries
       run: |
         git checkout -b binaries
-        git add gcc.exe
+        git add .
         git commit -m "Add gcc.exe binary"
         git push origin binaries --force
