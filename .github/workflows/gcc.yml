@@ -29,12 +29,10 @@ jobs:
                      --target=x86_64-w64-mingw32 --with-gmp=/usr/include --with-mpfr=/usr/include --with-mpc=/usr/include
         make -j$(nproc) all-gcc
         make install-gcc
+        GCC_BINARY=$(find $(pwd)/../install/bin -name "gcc" -type f)
+        cp $GCC_BINARY ../../gcc.exe
         cd ../..
         rm -rf gcc
-
-    - name: Copy GCC installation to repository root
-      run: |
-        cp -r gcc/install/* .
 
     - name: Set up Git
       run: |
@@ -44,6 +42,6 @@ jobs:
     - name: Commit and push binaries
       run: |
         git checkout -b binaries
-        git add .
-        git commit -m "Add GCC installation"
+        git add gcc.exe
+        git commit -m "Add gcc.exe binary"
         git push origin binaries --force
