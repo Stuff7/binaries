@@ -1,4 +1,4 @@
-name: Build clang
+name: Build
 
 on:
   push:
@@ -6,33 +6,38 @@ on:
       - master
 
 jobs:
-  build_clang:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Download and build clang
+    - name: Set up GCC dependencies
       run: |
-        git clone https://github.com/llvm/llvm-project.git
-        cd llvm-project/clang
-        mkdir build
-        cd build
-        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="X86" -DLLVM_INCLUDE_TESTS=OFF ..
-        make clang
-        cp bin/clang.exe ../../..
-        cd ../../..
-        rm -rf llvm-project
+        sudo apt-get update
+        sudo apt-get install -y build-essential git
+
+    - name: Download and build
+      run: |
+        git clone https://gcc.gnu.org/git/gcc.git
+        cd gcc
+        ./configure --prefix=$(pwd) --disable-multilib --enable-languages=c,c++
+        make -j$(nproc)
+        make install
+        GCC_BINARY=$(find $(pwd)/bin -name "gcc.exe" -type f)
+        cp $GCC_BINARY ../gcc.exe
+        cd ..
+        rm -rf gcc
 
     - name: Set up Git
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
-    - name: Create binaries branch
+    - name: Commit and push binaries
       run: |
         git checkout -b binaries
-        git add .
-        git commit -m "Add clang.exe"
+        git add gcc.exe
+        git commit -m "Add gcc.exe binary"
         git push origin binaries --force
