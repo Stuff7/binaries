@@ -19,7 +19,7 @@ jobs:
         cd llvm-project/clang
         mkdir build
         cd build
-        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="X86" ..
+        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="X86" -DLLVM_INCLUDE_TESTS=OFF ..
         make clang
         cp bin/clang.exe ../../..
         cd ../../..
