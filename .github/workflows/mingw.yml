@@ -22,8 +22,7 @@ jobs:
       run: |
         wget https://github.com/mirror/mingw-w64/archive/refs/tags/v10.0.0.tar.gz -O mingw-w64.tar.gz
         tar -xzf mingw-w64.tar.gz
-        echo "LS ."
-        ls .
+        mv mingw-w64-10.0.0 mingw-w64
         rm mingw-w64.tar.gz
 
     - name: Move MinGW to repository root
