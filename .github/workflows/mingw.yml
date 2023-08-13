@@ -1,0 +1,42 @@
+name: Build MinGW
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up MinGW dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential wget
+
+    - name: Download and extract MinGW
+      run: |
+        wget https://github.com/mirror/mingw-w64/archive/refs/tags/v10.0.0.tar.gz -O mingw-w64.tar.gz
+        tar -xzf mingw-w64.tar.gz
+        mv mingw-w64-8.0.0 mingw-w64
+        rm mingw-w64.tar.gz
+
+    - name: Move MinGW to repository root
+      run: |
+        mv mingw-w64 ./mingw-w64
+
+    - name: Set up Git
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+
+    - name: Commit and push MinGW
+      run: |
+        git checkout -b mingw
+        git add mingw-w64
+        git commit -m "Add MinGW"
+        git push origin mingw --force
