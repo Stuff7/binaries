@@ -1,9 +1,9 @@
-name: Build
+name: Build GCC
 
 on:
   push:
     branches:
-      - master
+      - master1
 
 jobs:
   build:
