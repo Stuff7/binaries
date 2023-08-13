@@ -7,22 +7,21 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up MinGW dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential wget
-
     - name: Download and build MinGW
       run: |
-        wget https://netix.dl.sourceforge.net/project/mingw/Installer/mingw-get-setup.exe -O mingw-get-setup.exe
-        chmod +x mingw-get-setup.exe
-        ./mingw-get-setup.exe
+        curl -Lo mingw-get-setup.exe https://netix.dl.sourceforge.net/project/mingw/Installer/mingw-get-setup.exe
+        mingw-get-setup.exe
+
+    - name: Move MinGW to repository root
+      run: |
+        mv C:\mingw64 .\mingw64
+        Remove-Item mingw-get-setup.exe
 
     - name: Set up Git
       run: |
