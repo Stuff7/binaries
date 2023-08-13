@@ -25,10 +25,6 @@ jobs:
         mv mingw-w64-10.0.0 mingw-w64
         rm mingw-w64.tar.gz
 
-    - name: Move MinGW to repository root
-      run: |
-        mv mingw-w64 ./mingw-w64
-
     - name: Set up Git
       run: |
         git config user.name "GitHub Action"
