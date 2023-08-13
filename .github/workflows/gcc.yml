@@ -29,9 +29,9 @@ jobs:
                      --target=x86_64-w64-mingw32 --with-gmp=/usr/include --with-mpfr=/usr/include --with-mpc=/usr/include
         make -j$(nproc) all-gcc
         make install-gcc
-        echo "DEBUG"
+        echo "DEBUG ../install/bin"
         ls ../install/bin
-        cp -r ../install/bin/* ../..
+        cp -r ../install/bin/x86_64-w64-mingw32-gcc ../../gcc.exe
         cd ../..
         rm -rf gcc
 
