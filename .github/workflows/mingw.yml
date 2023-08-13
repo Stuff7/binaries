@@ -20,6 +20,11 @@ jobs:
         dir C:/
         dir .
 
+    - name: Move MinGW to repository root
+      run: |
+        mv C:\msys64 .\mingw64
+        Remove-Item mingw-get-setup.exe
+
     - name: Set up Git
       run: |
         git config user.name "GitHub Action"
