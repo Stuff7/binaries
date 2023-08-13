@@ -18,12 +18,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential wget
 
-    - name: Download and extract MinGW
+    - name: Download and build MinGW
       run: |
-        wget https://github.com/mirror/mingw-w64/archive/refs/tags/v10.0.0.tar.gz -O mingw-w64.tar.gz
-        tar -xzf mingw-w64.tar.gz
-        mv mingw-w64-10.0.0 mingw-w64
-        rm mingw-w64.tar.gz
+        wget https://netix.dl.sourceforge.net/project/mingw/Installer/mingw-get-setup.exe -O mingw-get-setup.exe
+        chmod +x mingw-get-setup.exe
+        ./mingw-get-setup.exe
 
     - name: Set up Git
       run: |
@@ -33,6 +32,6 @@ jobs:
     - name: Commit and push MinGW
       run: |
         git checkout -b mingw
-        git add mingw-w64
+        git add mingw64
         git commit -m "Add MinGW"
         git push origin mingw --force
