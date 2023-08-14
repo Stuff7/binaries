@@ -37,16 +37,24 @@ jobs:
       run: |
         Compress-Archive -Path "clang" -DestinationPath "clang.zip"
 
-    - name: Create GitHub Release
+    - name: Create Release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: v1.0.0  # Set your desired tag name
         release_name: Clang v1.0.0  # Set your desired release name
-        files: clang.zip
+        draft: false
+        prerelease: false
 
-    - name: Cleanup
-      run: |
-        git checkout master
-        git branch -D clang
+    - name: Upload Clang ZIP to Release
+      id: upload_clang
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: clang.zip
+        asset_name: clang.zip
+        asset_content_type: application/zip
