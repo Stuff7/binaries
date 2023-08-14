@@ -13,6 +13,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Use Visual Studio 2019 image
+      uses: actions/setup-msbuild@v1
+      with:
+        vs-version: '2019'
+
     - name: Build Clang
       run: |
         git clone --depth 1 https://github.com/llvm/llvm-project.git
