@@ -1,4 +1,4 @@
-name: Install clang
+name: Create Clang Release
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  install_clang:
+  create_release:
     runs-on: windows-latest
 
     steps:
@@ -33,9 +33,20 @@ jobs:
         Write-Host "Cleaning up downloaded installer..."
         Remove-Item -Path $downloadPath -Force
 
-    - name: Commit and push binaries
+    - name: Compress Clang installation
       run: |
-        git checkout -b clang
-        git add .
-        git commit -m "Add Clang install"
-        git push origin clang --force
+        Compress-Archive -Path "clang" -DestinationPath "clang.zip"
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0  # Set your desired tag name
+        release_name: Clang v1.0.0  # Set your desired release name
+        files: clang.zip
+
+    - name: Cleanup
+      run: |
+        git checkout master
+        git branch -D clang
