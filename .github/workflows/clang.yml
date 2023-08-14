@@ -1,4 +1,4 @@
-name: Build and Install Clang
+name: Install clang
 
 on:
   push:
@@ -6,29 +6,40 @@ on:
       - master
 
 jobs:
-  build_clang:
+  install_clang:
     runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Use Visual Studio 2019 image
-      uses: actions/setup-msbuild@v1
-      with:
-        vs-version: '2019'
-
-    - name: Build Clang
+    - name: Set up Git
       run: |
-        git clone --depth 1 https://github.com/llvm/llvm-project.git
-        mkdir build
-        cd build
-        cmake -G "Visual Studio 16 2019" -A x64 -Thost=x64 -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_INSTALL_PREFIX=install ../llvm-project/llvm
-        cmake --build . --config Release --target install
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+
+    - name: Download Clang installer
+      run: |
+        $downloadUrl = "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/LLVM-16.0.0-win64.exe"
+        $downloadPath = "$env:TEMP\LLVM-16.0.0-win64.exe"
+
+        # Download Clang
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
+
+    - name: Install Clang silently
+      run: |
+        $installPath = "$PWD\clang"
+
+        # Run the downloaded installer silently
+        Start-Process -Wait -FilePath $downloadPath -ArgumentList "/S", "/D=$installPath"
+
+    - name: Clean up downloaded installer
+      run: |
+        Remove-Item -Path $downloadPath -Force
 
     - name: Commit and push binaries
       run: |
         git checkout -b clang
         git add .
-        git commit -m "Add Clang build"
+        git commit -m "Add Clang install"
         git push origin clang --force
