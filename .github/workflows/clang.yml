@@ -18,27 +18,20 @@ jobs:
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
-    - name: Download Clang installer
-      id: download
+    - name: Download and install Clang
       run: |
         $downloadUrl = "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/LLVM-16.0.0-win64.exe"
         $downloadPath = "$env:TEMP\LLVM-16.0.0-win64.exe"
-
-        # Download Clang
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
-        echo "DownloadPath=$downloadPath" >> $GITHUB_ENV
-
-    - name: Install Clang silently
-      run: |
         $installPath = "$PWD\clang"
-        $downloadPath = $env:DownloadPath
 
-        # Run the downloaded installer silently
+        Write-Host "Downloading Clang installer..."
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
+
+        Write-Host "Running Clang installer silently..."
         Start-Process -Wait -FilePath $downloadPath -ArgumentList "/S", "/D=$installPath"
 
-    - name: Clean up downloaded installer
-      run: |
-        Remove-Item -Path $env:DownloadPath -Force
+        Write-Host "Cleaning up downloaded installer..."
+        Remove-Item -Path $downloadPath -Force
 
     - name: Commit and push binaries
       run: |
