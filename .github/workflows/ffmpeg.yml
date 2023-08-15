@@ -1,0 +1,57 @@
+name: Build and Release FFmpeg for Windows
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up FFmpeg environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl xz-utils build-essential
+
+    - name: Download FFmpeg source code
+      run: |
+        curl -O https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
+        tar -xf ffmpeg-6.0.tar.xz
+        cd ffmpeg-6.0
+
+    - name: Build FFmpeg for Windows
+      run: |
+        ./configure --arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32- --prefix=build
+        make
+        make install
+
+    - name: Zip FFmpeg build
+      run: |
+        cd build
+        zip -r ffmpeg-windows.zip *
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v6.0
+        release_name: FFmpeg 6.0 for Windows
+        body: FFmpeg 6.0 build for Windows.
+      
+    - name: Upload FFmpeg build
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./ffmpeg-6.0/build/ffmpeg-windows.zip
+        asset_name: ffmpeg-windows.zip
+        asset_content_type: application/zip
