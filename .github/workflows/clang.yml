@@ -3,7 +3,7 @@ name: Create Clang Release
 on:
   push:
     branches:
-      - master
+      - masters
 
 jobs:
   create_release:
