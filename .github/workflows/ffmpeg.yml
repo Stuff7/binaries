@@ -7,16 +7,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up FFmpeg environment
+    - name: Set up MSVC environment
       run: |
-        sudo apt-get update
-        sudo apt-get install -y curl xz-utils build-essential mingw-w64 nasm wine64
+        choco install nasm
+        choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+        refreshenv
 
     - name: Download FFmpeg source code
       run: |
@@ -24,15 +25,6 @@ jobs:
         tar -xf ffmpeg-6.0.tar.xz
         cd ffmpeg-6.0
         ls -la
-
-    - name: Set environment variables for MSVC
-      run: |
-        export PATH="/path/to/msvc/bin:$PATH"
-        export CC=i686-w64-mingw32-cl.exe
-        export CXX=i686-w64-mingw32-cpp.exe
-        export AR=i686-w64-mingw32-ar.exe
-        export STRIP=i686-w64-mingw32-strip.exe
-        # Add any other necessary environment variables
 
     - name: Build FFmpeg libraries and includes
       run: |
