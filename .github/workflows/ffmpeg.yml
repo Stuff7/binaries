@@ -1,4 +1,4 @@
-name: Build and Release FFmpeg for Windows
+name: Decompress and Push FFmpeg Archive
 
 on:
   push:
@@ -6,60 +6,22 @@ on:
       - master
 
 jobs:
-  build:
-    runs-on: windows-latest
+  decompress_and_push:
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Unzip FFmpeg source code
+    - name: Setup FFmpeg archive
       run: |
-        dir
         mkdir ffmpeg-6.0
         tar -xJf ffmpeg-6.0.tar.xz -C ffmpeg-6.0 --strip-components=1
-        dir
-        cd ffmpeg-6.0
-        dir
 
-    - name: Build FFmpeg libraries and includes
+    - name: Commit and Push changes
       run: |
-        cd ffmpeg-6.0
-        ./configure --arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32- --prefix=build --toolchain=msvc
-        make
-        make install
-
-    - name: List files in build directory
-      run: |
-        dir ffmpeg-6.0\build
-
-    - name: Zip FFmpeg build
-      run: |
-        cd ffmpeg-6.0\build
-        zip -r ffmpeg-windows.zip *
-
-    - name: List files in build directory after zip
-      run: |
-        dir ffmpeg-6.0\build
-
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.run_id }}
-        release_name: FFmpeg Build ${{ github.run_id }}
-        draft: false
-        prerelease: false
-
-    - name: Upload FFmpeg ZIP to Release
-      id: upload_ffmpeg
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./ffmpeg-6.0/build/ffmpeg-windows.zip
-        asset_name: ffmpeg-windows.zip
-        asset_content_type: application/zip
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@users.noreply.github.com"
+        git add ffmpeg-6.0
+        git commit -m "Decompressed FFmpeg archive"
+        git push origin master
