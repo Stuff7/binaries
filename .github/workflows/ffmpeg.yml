@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
@@ -15,8 +15,11 @@ jobs:
 
     - name: Set up FFmpeg environment
       run: |
-        sudo apt-get update
-        sudo apt-get install -y curl xz-utils build-essential mingw-w64 nasm  # Install NASM
+        choco install nasm
+        choco install msys2 --params "/NoUpdate"
+        refreshenv
+        pacman -Syu --noconfirm
+        pacman -S --noconfirm make mingw-w64-x86_64-toolchain
 
     - name: Download FFmpeg source code
       run: |
@@ -28,13 +31,13 @@ jobs:
     - name: Build FFmpeg libraries and includes
       run: |
         cd ffmpeg-6.0
-        ./configure --arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32- --prefix=build
+        ./configure --arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32- --prefix=build --toolchain=msvc
         make
         make install
 
     - name: Zip FFmpeg build
       run: |
-        cd ffmpeg-6.0/build
+        cd build
         zip -r ffmpeg-windows.zip *
 
     - name: Create Release
