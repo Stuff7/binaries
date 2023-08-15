@@ -15,7 +15,6 @@ jobs:
 
     - name: Download FFmpeg source code
       run: |
-        curl -O https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
         tar -xf ffmpeg-6.0.tar.xz
         cd ffmpeg-6.0
         ls -la
