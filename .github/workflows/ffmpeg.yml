@@ -13,8 +13,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Download FFmpeg source code
+    - name: List files in current directory
       run: |
+        ls -la
+
+    - name: Unzip FFmpeg source code
+      run: |
+        tar --version
+        7z --version
         tar -xf ffmpeg-6.0.tar.xz
         cd ffmpeg-6.0
         ls -la
@@ -26,10 +32,18 @@ jobs:
         make
         make install
 
+    - name: List files in build directory
+      run: |
+        ls -la ffmpeg-6.0/build
+
     - name: Zip FFmpeg build
       run: |
-        cd build
+        cd ffmpeg-6.0/build
         zip -r ffmpeg-windows.zip *
+
+    - name: List files in build directory after zip
+      run: |
+        ls -la ffmpeg-6.0/build
 
     - name: Create Release
       id: create_release
