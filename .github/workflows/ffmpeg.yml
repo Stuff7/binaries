@@ -25,19 +25,16 @@ jobs:
         cd ffmpeg-6.0
         ls -la
 
-    - name: Make configure script executable
+    - name: Build FFmpeg libraries and includes
       run: |
-        chmod +x configure
-
-    - name: Build FFmpeg for Windows
-      run: |
+        cd ffmpeg-6.0
         ./configure --arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32- --prefix=build
         make
         make install
 
     - name: Zip FFmpeg build
       run: |
-        cd build
+        cd ffmpeg-6.0/build
         zip -r ffmpeg-windows.zip *
 
     - name: Create GitHub Release
