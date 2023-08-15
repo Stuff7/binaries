@@ -16,7 +16,8 @@ jobs:
     - name: Unzip FFmpeg source code
       run: |
         dir
-        tar -xf ffmpeg-6.0.tar.xz
+        mkdir ffmpeg-6.0
+        tar -xJf ffmpeg-6.0.tar.xz -C ffmpeg-6.0 --strip-components=1
         dir
         cd ffmpeg-6.0
         dir
