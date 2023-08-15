@@ -1,41 +1,45 @@
-name: Build and Release FFmpeg for Windows
+name: Create Clang Release
 
 on:
   push:
     branches:
-      - master
+      - masters
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  create_release:
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up FFmpeg environment
+    - name: Set up Git
       run: |
-        sudo apt-get update
-        sudo apt-get install -y curl xz-utils build-essential mingw-w64 nasm  # Install NASM
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
 
-    - name: Download FFmpeg source code
+    - name: Download and install Clang
       run: |
-        curl -O https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
-        tar -xf ffmpeg-6.0.tar.xz
-        cd ffmpeg-6.0
-        ls -la
+        $downloadUrl = "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/LLVM-16.0.0-win64.exe"
+        $downloadPath = "$env:TEMP\LLVM-16.0.0-win64.exe"
+        $installPath = "$PWD\clang"
 
-    - name: Build FFmpeg libraries and includes
-      run: |
-        cd ffmpeg-6.0
-        ./configure --arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32- --prefix=build
-        make
-        make install
+        Write-Host "Downloading Clang installer..."
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
 
-    - name: Zip FFmpeg build
+        Write-Host "Running Clang installer silently..."
+        Start-Process -Wait -FilePath $downloadPath -ArgumentList "/S", "/D=$installPath"
+
+        Write-Host "Cleaning up downloaded installer..."
+        Remove-Item -Path $downloadPath -Force
+
+    - name: Compress Clang installation
       run: |
-        cd ffmpeg-6.0/build
-        zip -r ffmpeg-windows.zip *
+        Compress-Archive -Path "clang" -DestinationPath "clang.zip"
+
+    - name: Get current date and time
+      id: datetime
+      run: echo "::set-output name=date::$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 
     - name: Create Release
       id: create_release
@@ -43,18 +47,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.run_id }}
-        release_name: FFmpeg Build ${{ github.run_id }}
+        tag_name: ${{ steps.datetime.outputs.date }}
+        release_name: Clang Release ${{ steps.datetime.outputs.date }}
         draft: false
         prerelease: false
 
-    - name: Upload FFmpeg ZIP to Release
-      id: upload_ffmpeg
+    - name: Upload Clang ZIP to Release
+      id: upload_clang
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./ffmpeg-6.0/build/ffmpeg-windows.zip
-        asset_name: ffmpeg-windows.zip
+        asset_path: clang.zip
+        asset_name: clang.zip
         asset_content_type: application/zip
