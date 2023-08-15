@@ -25,6 +25,15 @@ jobs:
         cd ffmpeg-6.0
         ls -la
 
+    - name: Set environment variables for MSVC
+      run: |
+        export PATH="/path/to/msvc/bin:$PATH"
+        export CC=i686-w64-mingw32-cl.exe
+        export CXX=i686-w64-mingw32-cpp.exe
+        export AR=i686-w64-mingw32-ar.exe
+        export STRIP=i686-w64-mingw32-strip.exe
+        # Add any other necessary environment variables
+
     - name: Build FFmpeg libraries and includes
       run: |
         cd ffmpeg-6.0
