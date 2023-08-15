@@ -16,7 +16,7 @@ jobs:
     - name: Set up FFmpeg environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y curl xz-utils build-essential mingw-w64
+        sudo apt-get install -y curl xz-utils build-essential mingw-w64 nasm  # Install NASM
 
     - name: Download FFmpeg source code
       run: |
@@ -45,15 +45,4 @@ jobs:
       with:
         tag_name: v6.0
         release_name: FFmpeg 6.0 for Windows
-        body: FFmpeg 6.0 build for Windows.
-      
-    - name: Upload FFmpeg build
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./ffmpeg-6.0/build/ffmpeg-windows.zip
-        asset_name: ffmpeg-windows.zip
-        asset_content_type: application/zip
+        body: FFmpeg 6.
