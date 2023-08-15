@@ -13,12 +13,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up MSVC environment
-      run: |
-        choco install nasm
-        choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
-        refreshenv
-
     - name: Download FFmpeg source code
       run: |
         curl -O https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
