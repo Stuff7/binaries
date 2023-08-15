@@ -30,7 +30,7 @@ jobs:
         make
         make install
 
-    - name: Create library archive
+    - name: Zip FFmpeg libraries
       run: |
         cd build
         zip -r ffmpeg-libraries.zip *
