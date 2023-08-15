@@ -20,8 +20,7 @@ jobs:
     - name: Unzip FFmpeg source code
       run: |
         7z x ffmpeg-6.0.tar.xz
-        cd ffmpeg-6.0
-        dir
+        dir ffmpeg-6.0
 
     - name: Build FFmpeg libraries and includes
       run: |
