@@ -23,6 +23,7 @@ jobs:
         curl -O https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
         tar -xf ffmpeg-6.0.tar.xz
         cd ffmpeg-6.0
+        ls -la
 
     - name: Build FFmpeg for Windows
       run: |
