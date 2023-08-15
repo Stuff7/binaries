@@ -37,12 +37,24 @@ jobs:
         cd ffmpeg-6.0/build
         zip -r ffmpeg-windows.zip *
 
-    - name: Create GitHub Release
+    - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v6.0
-        release_name: FFmpeg 6.0 for Windows
-        body: FFmpeg 6.
+        tag_name: ${{ github.run_id }}
+        release_name: FFmpeg Build ${{ github.run_id }}
+        draft: false
+        prerelease: false
+
+    - name: Upload FFmpeg ZIP to Release
+      id: upload_ffmpeg
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./ffmpeg-6.0/build/ffmpeg-windows.zip
+        asset_name: ffmpeg-windows.zip
+        asset_content_type: application/zip
