@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -15,11 +15,8 @@ jobs:
 
     - name: Set up FFmpeg environment
       run: |
-        choco install nasm
-        choco install msys2 --params "/NoUpdate"
-        refreshenv
-        pacman -Syu --noconfirm
-        pacman -S --noconfirm make mingw-w64-x86_64-toolchain
+        sudo apt-get update
+        sudo apt-get install -y curl xz-utils build-essential mingw-w64 nasm wine64
 
     - name: Download FFmpeg source code
       run: |
