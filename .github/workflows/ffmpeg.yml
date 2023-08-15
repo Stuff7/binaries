@@ -13,13 +13,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: List files in current directory
-      run: |
-        dir
-
     - name: Unzip FFmpeg source code
       run: |
-        7z x ffmpeg-6.0.tar.xz
+        dir
+        tar -xf ffmpeg-6.0.tar.xz
+        dir
+        cd ffmpeg-6.0
         dir
 
     - name: Build FFmpeg libraries and includes
