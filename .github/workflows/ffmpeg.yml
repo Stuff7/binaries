@@ -34,16 +34,10 @@ jobs:
         # Install FFmpeg
         msys2 -c "make install"
         
-    - name: Prepare release
-      run: |
-        cd ..
-        mkdir ffmpeg-6.0-build-release
-        cp -r ffmpeg-6.0-build/lib ffmpeg-6.0-build-release
-        cp -r ffmpeg-6.0-build/include ffmpeg-6.0-build-release
-        
     - name: Zip build files
       run: |
-        tar -czvf ffmpeg-6.0-build-release.tar.gz ffmpeg-6.0-build-release
+        cd ..
+        tar -czvf ffmpeg-6.0-build-release.tar.gz ffmpeg-6.0-build
         
     - name: Create Release
       id: create_release
