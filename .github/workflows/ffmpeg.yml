@@ -1,4 +1,4 @@
-name: Decompress and Push FFmpeg Archive
+name: Windows Compile and Release
 
 on:
   push:
@@ -6,22 +6,57 @@ on:
       - master
 
 jobs:
-  decompress_and_push:
-    runs-on: ubuntu-latest
-
+  build:
+    runs-on: windows-latest
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Setup FFmpeg archive
+      
+    - name: Set up MSYS2 environment
+      uses: matthewjamesr/mingw-msys2-install@v1
+      
+    - name: Install dependencies
       run: |
-        mkdir ffmpeg-6.0
-        tar -xJf ffmpeg-6.0.tar.xz -C ffmpeg-6.0 --strip-components=1
-
-    - name: Commit and Push changes
+        pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain
+        pacman -S --noconfirm yasm
+        
+    - name: Build FFmpeg
       run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@users.noreply.github.com"
-        git add ffmpeg-6.0
-        git commit -m "Decompressed FFmpeg archive"
-        git push origin master
+        cd ffmpeg-6.0
+        ./configure --arch=x86_64 --target-os=mingw32 --prefix=../ffmpeg-6.0-build
+        make
+        make install
+        
+    - name: Prepare release
+      run: |
+        cd ..
+        mkdir ffmpeg-6.0-build-release
+        cp -r ffmpeg-6.0-build/lib ffmpeg-6.0-build-release
+        cp -r ffmpeg-6.0-build/include ffmpeg-6.0-build-release
+        
+    - name: Zip build files
+      run: |
+        tar -czvf ffmpeg-6.0-build-release.tar.gz ffmpeg-6.0-build-release
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.run_id }}
+        release_name: FFmpeg Build ${{ github.run_id }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload FFmpeg ZIP to Release
+      id: upload_ffmpeg
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./ffmpeg-6.0-build-release.tar.gz
+        asset_name: ffmpeg-windows.tar.gz
+        asset_content_type: application/gzip
