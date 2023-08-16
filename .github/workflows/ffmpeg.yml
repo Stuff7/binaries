@@ -24,9 +24,15 @@ jobs:
     - name: Build FFmpeg
       run: |
         cd ffmpeg-6.0
-        ./configure --arch=x86_64 --target-os=mingw32 --prefix=../ffmpeg-6.0-build
-        make
-        make install
+        
+        # Configure FFmpeg
+        msys2 -c "./configure --arch=x86_64 --target-os=mingw32 --prefix=../ffmpeg-6.0-build"
+        
+        # Build FFmpeg
+        msys2 -c "make"
+        
+        # Install FFmpeg
+        msys2 -c "make install"
         
     - name: Prepare release
       run: |
