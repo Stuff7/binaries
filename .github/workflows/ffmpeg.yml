@@ -17,8 +17,8 @@ jobs:
       run: |
         mkdir ffmpeg
         cd ffmpeg
-        wget https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
-        7z x ffmpeg-release-full.7z
+        wget https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
+        7z x ffmpeg-release-full-shared.7z
 
     - name: Zip FFmpeg build
       run: |
