@@ -1,4 +1,4 @@
-name: Build and Release FFmpeg for Windows
+name: Build and Release Pre-built FFmpeg for Windows
 
 on:
   push:
@@ -13,23 +13,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # - name: Set up MSVC environment
-    #   run: |
-    #     choco install visualstudio2019buildtools --package-parameters "--includeRecommended --includeOptional"
-    #     choco install nasm
-    #     Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
-
-    - name: Build FFmpeg libraries and includes
+    - name: Download FFmpeg binaries
       run: |
-        cd ffmpeg-6.0  # Navigate to the extracted FFmpeg directory
-        $env:PATH += ";C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x64"
-        ./configure --toolchain=msvc --arch=x86
-        make
-        make install
+        mkdir ffmpeg
+        cd ffmpeg
+        curl -O https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
+        7z x ffmpeg-release-full.7z
 
     - name: Zip FFmpeg build
       run: |
-        cd ffmpeg-6.0/build
+        cd ffmpeg
         zip -r ffmpeg-windows.zip *
 
     - name: Create Release
@@ -39,7 +32,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.run_id }}
-        release_name: FFmpeg Build ${{ github.run_id }}
+        release_name: Pre-built FFmpeg ${{ github.run_id }}
         draft: false
         prerelease: false
 
@@ -50,6 +43,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./ffmpeg-6.0/build/ffmpeg-windows.zip
+        asset_path: ./ffmpeg/ffmpeg-windows.zip
         asset_name: ffmpeg-windows.zip
         asset_content_type: application/zip
