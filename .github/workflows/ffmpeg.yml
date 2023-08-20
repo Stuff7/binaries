@@ -7,18 +7,18 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Download and extract FFmpeg binaries
+    - name: Download FFmpeg binaries
       run: |
         mkdir ffmpeg
         cd ffmpeg
-        curl -LO https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.zip
-        7z x ffmpeg-release-full.zip
+        wget https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
+        7z x ffmpeg-release-full.7z
 
     - name: Zip FFmpeg build
       run: |
