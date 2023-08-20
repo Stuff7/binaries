@@ -13,12 +13,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Download FFmpeg binaries
+    - name: Download and extract FFmpeg binaries
       run: |
         mkdir ffmpeg
         cd ffmpeg
-        curl -O https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
-        7z x ffmpeg-release-full.7z
+        curl -LO https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.zip
+        7z x ffmpeg-release-full.zip
 
     - name: Zip FFmpeg build
       run: |
