@@ -18,11 +18,12 @@ jobs:
         choco install visualstudio2019buildtools --package-parameters "--includeRecommended --includeOptional"
         choco install nasm
         Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
-        
-    - name: Download FFmpeg source code
+
+    - name: Download and extract FFmpeg source code
       run: |
         curl -O https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
-        tar -xf ffmpeg-6.0.tar.xz
+        7z x ffmpeg-6.0.tar.xz
+        7z x ffmpeg-6.0.tar
         cd ffmpeg-6.0
         ls -la
 
