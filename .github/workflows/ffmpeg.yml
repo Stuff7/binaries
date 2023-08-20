@@ -17,7 +17,7 @@ jobs:
       run: |
         choco install visualstudio2019buildtools --package-parameters "--includeRecommended --includeOptional"
         choco install nasm
-        RefreshEnv.cmd
+        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         
     - name: Download FFmpeg source code
       run: |
@@ -29,7 +29,7 @@ jobs:
     - name: Build FFmpeg libraries and includes
       run: |
         cd ffmpeg-6.0
-        export PATH="/c/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64:$PATH"
+        $env:PATH += ";C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x64"
         ./configure --toolchain=msvc --arch=x86
         make
         make install
