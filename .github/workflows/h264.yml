@@ -52,7 +52,7 @@ jobs:
         run: |
           cd h264bitstream-master
           mkdir ../bin
-          cp /usr/local/bin/h264_analyze /usr/local/lib/libh264bitstream ../bin
+          cp /usr/local/bin/h264_analyze ../bin
 
       - name: Commit Binaries
         run: |
