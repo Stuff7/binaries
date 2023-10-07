@@ -25,7 +25,6 @@ jobs:
 
       - name: Configure and Build
         run: |
-          autoreconf -i
           ./configure --prefix=/usr/local
           make
 
