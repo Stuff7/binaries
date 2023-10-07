@@ -1,4 +1,4 @@
-name: Install h264bitstream
+name: Build and Update h264 Branch
 
 on:
   push:
@@ -10,31 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install prerequisites
+      - name: Install Dependencies
         run: |
-          sudo apt-get update -q
-          sudo apt-get install -y build-essential libtool autoconf ffmpeg
+          # Install any necessary dependencies here
+          # For example, you may need to install a C/C++ compiler
+          sudo apt-get update
+          sudo apt-get install -y build-essential
 
-      - name: Auto-reconfigure project
-        run: autoreconf -i
-
-      - name: Configure and build project
+      - name: Compile Binaries
         run: |
-          ./configure
+          # Clone the h264bitstream repository
+          git clone https://github.com/aizvorski/h264bitstream.git
+          cd h264bitstream
+          
+          # Compile the binaries (adjust the build command as needed)
           make
 
-      - name: Install binaries to the root of the repository
+      - name: Force Push Binaries to h264 Branch
         run: |
-          cp h264_analyze libh264bitstream.so* $GITHUB_WORKSPACE/
-          chmod +x $GITHUB_WORKSPACE/h264_analyze
-
-      - name: Commit binaries to master
-        run: |
+          # Configure Git with your name and email
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git add -A
+          git add .
           git commit -m "Update h264bitstream binaries"
-          git push origin master
+          git push origin HEAD:h264 --force
