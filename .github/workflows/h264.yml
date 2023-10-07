@@ -3,7 +3,7 @@ name: Build and Push H264 Bitstream Library
 on:
   push:
     branches:
-      - h264
+      - h264s
 
 jobs:
   build:
