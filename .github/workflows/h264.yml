@@ -18,10 +18,12 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
 
-      - name: Clone h264bitstream Repository
+      - name: Download and Extract h264bitstream Repository
         run: |
-          git clone https://github.com/aizvorski/h264bitstream.git
-          cd h264bitstream
+          curl -L -o h264bitstream.zip https://github.com/aizvorski/h264bitstream/archive/refs/heads/master.zip
+          unzip h264bitstream.zip
+          ls
+          cd h264bitstream-master
           ls
 
       - name: Install Dependencies
@@ -31,7 +33,7 @@ jobs:
 
       - name: Configure and Build
         run: |
-          cd h264bitstream
+          cd h264bitstream-master
           ls
           autoreconf -i
           ./configure --prefix=/usr/local
