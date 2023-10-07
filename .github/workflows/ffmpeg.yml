@@ -3,7 +3,7 @@ name: Build and Release Pre-built FFmpeg for Windows
 on:
   push:
     branches:
-      - master
+      - masters
 
 jobs:
   build:
