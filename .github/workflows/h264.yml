@@ -43,6 +43,17 @@ jobs:
           make
           ls
 
+      - name: Install Binaries
+        run: |
+          cd h264bitstream-master
+          sudo make install
+
+      - name: Copy Binaries to 'bin' Folder
+        run: |
+          cd h264bitstream-master
+          mkdir ../bin
+          cp /usr/local/bin/h264_analyze /usr/local/lib/libh264bitstream ../bin
+
       - name: Commit Binaries
         run: |
           git add .
