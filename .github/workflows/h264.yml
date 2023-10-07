@@ -1,0 +1,40 @@
+name: Install h264bitstream
+
+on:
+  push:
+    branches:
+      - h264
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install prerequisites
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y build-essential libtool autoconf ffmpeg
+
+      - name: Auto-reconfigure project
+        run: autoreconf -i
+
+      - name: Configure and build project
+        run: |
+          ./configure
+          make
+
+      - name: Install binaries to the root of the repository
+        run: |
+          cp h264_analyze libh264bitstream.so* $GITHUB_WORKSPACE/
+          chmod +x $GITHUB_WORKSPACE/h264_analyze
+
+      - name: Commit binaries to master
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add -A
+          git commit -m "Update h264bitstream binaries"
+          git push origin master
