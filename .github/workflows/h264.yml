@@ -3,7 +3,7 @@ name: Build and Push H264 Bitstream Library
 on:
   push:
     branches:
-      - h264s
+      - h264
 
 jobs:
   build:
@@ -52,7 +52,7 @@ jobs:
         run: |
           cd h264bitstream-master
           mkdir ../bin
-          cp /usr/local/bin/h264_analyze ../bin
+          cp /usr/local/bin/h264_analyze /usr/local/lib/libh264bitstream* ../bin
 
       - name: Commit Binaries
         run: |
