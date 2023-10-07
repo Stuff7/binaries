@@ -3,7 +3,7 @@ name: Decode H.264 Video
 on:
   push:
     branches:
-      - h264
+      - h264s
 
 jobs:
   decode:
