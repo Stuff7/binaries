@@ -15,6 +15,5 @@ jobs:
 
       - name: Run h264_analyze
         run: |
-          sudo cp -r bin/* /usr/local/lib/
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:$GITHUB_WORKSPACE/bin
           ./bin/h264_analyze -v avc
