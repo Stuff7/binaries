@@ -36,14 +36,11 @@ jobs:
           autoreconf -i
           ./configure --prefix=/usr/local
           make
-
-      - name: Install Binaries
-        run: |
-          sudo make install
+          ls
 
       - name: Commit Binaries
         run: |
-          git add /usr/local/bin/h264_analyze /usr/local/lib/libh264bitstream
+          git add .
           git commit -m "Update h264bitstream binaries"
 
       - name: Force Push Binaries
