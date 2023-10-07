@@ -30,6 +30,9 @@ jobs:
 
       - name: Configure and Build
         run: |
+          ls
+          autoreconf -i
+          ./configure --prefix=/usr/local
           make
 
       - name: Install Binaries
