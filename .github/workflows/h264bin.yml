@@ -13,10 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Copy Binaries to /usr/local/lib/
-        run: |
-          sudo cp -r bin/* /usr/local/lib/
-
       - name: Run h264_analyze
         run: |
+          sudo cp -r bin/* /usr/local/lib/
           ./bin/h264_analyze avc
