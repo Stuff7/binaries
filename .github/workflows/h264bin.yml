@@ -16,4 +16,4 @@ jobs:
       - name: Run h264_analyze
         run: |
           export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/bin
-          ./bin/h264_analyze avc -v
+          ./bin/h264_analyze avc -v 1
