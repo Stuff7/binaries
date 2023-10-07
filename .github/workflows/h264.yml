@@ -31,10 +31,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libtool autoconf ffmpeg
 
+      - name: Remove Existing Files
+        run: |
+          git rm -r *
+
       - name: Configure and Build
         run: |
           cd h264bitstream-master
-          ls
           autoreconf -i
           ./configure --prefix=/usr/local
           make
