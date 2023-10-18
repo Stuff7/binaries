@@ -1,0 +1,53 @@
+name: Install Ripgrep on Windows
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  install_and_upload:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+
+    - name: Install Ripgrep
+      run: |
+        choco install ripgrep -y
+
+    - name: Package Ripgrep binaries
+      run: |
+        Compress-Archive -Path "C:\ProgramData\chocolatey\lib\ripgrep" -DestinationPath "ripgrep.zip"
+
+    - name: Get current date and time
+      id: datetime
+      run: echo "::set-output name=date::$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.datetime.outputs.date }}
+        release_name: Ripgrep Release ${{ steps.datetime.outputs.date }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Ripgrep ZIP to Release
+      id: upload_ripgrep
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ripgrep.zip
+        asset_name: ripgrep.zip
+        asset_content_type: application/zip
