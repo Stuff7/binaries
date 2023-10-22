@@ -1,0 +1,58 @@
+name: Install LLVM on Windows and Upload to Releases
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  install_and_upload:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+
+    - name: Download LLVM Installer
+      run: |
+        $url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.3/LLVM-17.0.3-win64.exe"
+        Invoke-WebRequest -Uri $url -OutFile "llvm-installer.exe"
+
+    - name: Install LLVM
+      run: |
+        .\llvm-installer.exe /S  # Install LLVM silently
+
+    - name: Package LLVM Binaries
+      run: |
+        Compress-Archive -Path "C:\Program Files\LLVM" -DestinationPath "llvm.zip"
+
+    - name: Get current date and time
+      id: datetime
+      run: echo "::set-output name=date::$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.datetime.outputs.date }}
+        release_name: LLVM Release ${{ steps.datetime.outputs.date }}
+        draft: false
+        prerelease: false
+
+    - name: Upload LLVM ZIP to Release
+      id: upload_llvm
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: llvm.zip
+        asset_name: llvm.zip
+        asset_content_type: application/zip
