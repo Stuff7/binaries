@@ -3,7 +3,7 @@ name: Install Ripgrep on Windows
 on:
   push:
     branches:
-      - master
+      - masters
 
 jobs:
   install_and_upload:
