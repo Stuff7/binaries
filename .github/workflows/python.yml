@@ -26,10 +26,6 @@ jobs:
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
-    - name: Get Python version
-      run: |
-        C:\Python312\python --version
-
     - name: Package Python binaries
       run: |
         Compress-Archive -Path "C:\Python312" -DestinationPath "python312.zip"
