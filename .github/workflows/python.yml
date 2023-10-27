@@ -26,14 +26,15 @@ jobs:
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
-    - name: Debug
+    - name: Get Python installation path
+      id: get_python_path
       run: |
-        Get-ChildItem -Path "C:\Program Files" -Recurse
-        Get-ChildItem -Path "C:\Program Files (x86)" -Recurse
+        Get-Command python | ForEach-Object { $_.Source.Replace("python.exe", "") }
 
     - name: Package Python binaries
       run: |
-        Compress-Archive -Path "C:\Python312" -DestinationPath "python312.zip"
+        $pythonPath = "${{ steps.get_python_path.outputs.stdout }}"
+        Compress-Archive -Path $pythonPath -DestinationPath "python312.zip"
 
     - name: Get current date and time
       id: datetime
