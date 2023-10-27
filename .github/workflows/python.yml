@@ -6,48 +6,49 @@ on:
       - master
 
 jobs:
-  install_and_upload:
+  install_and_upload_python:
     runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Download Python installer
-      run: |
-        Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" -OutFile python-installer.exe
-
-    - name: Install Python
-      run: |
-        .\python-installer.exe /quiet InstallAllUsers=1 PrependPath=1 TargetDir=C:\Python312
-
     - name: Set up Git
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
-    - name: Get Python installation path
-      id: get_python_path
+    - name: Download Python 3.12.0
       run: |
-        Get-Command python | ForEach-Object { $_.Source.Replace("python.exe", "") }
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe' -OutFile python-3.12.0-amd64.exe
+
+    - name: Install Python
+      run: |
+        Start-Process -FilePath python-3.12.0-amd64.exe -ArgumentList '/quiet', 'InstallAllUsers=1', 'PrependPath=1' -Wait
+
+    - name: Get Python Version
+      id: python_version
+      run: |
+        $pythonVersion = python --version
+        echo "::set-output name=version::${pythonVersion}"
 
     - name: Package Python binaries
       run: |
-        $pythonPath = "${{ steps.get_python_path.outputs.stdout }}"
-        Compress-Archive -Path $pythonPath -DestinationPath "python312.zip"
+        Compress-Archive -Path "C:\Program Files\Python312" -DestinationPath "python-3.12.0-amd64.zip"
 
     - name: Get current date and time
       id: datetime
       run: echo "::set-output name=date::$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 
-    - name: Create Release
+    - name: Create Python Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.datetime.outputs.date }}
-        release_name: "Python 3.12.0 Release ${{ steps.datetime.outputs.date }}"
+        release_name: Python 3.12.0 Release ${{ steps.datetime.outputs.date }}
         draft: false
         prerelease: false
 
@@ -58,6 +59,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: python312.zip
-        asset_name: python312.zip
+        asset_path: python-3.12.0-amd64.zip
+        asset_name: python-3.12.0-amd64.zip
         asset_content_type: application/zip
