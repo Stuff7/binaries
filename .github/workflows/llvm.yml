@@ -3,7 +3,7 @@ name: Install LLVM on Windows and Upload to Releases
 on:
   push:
     branches:
-      - master
+      - masters
 
 jobs:
   install_and_upload:
