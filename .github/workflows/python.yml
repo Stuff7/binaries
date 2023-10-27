@@ -22,7 +22,7 @@ jobs:
           Start-Process -Wait -FilePath python-installer.exe -ArgumentList '/quiet', 'InstallAllUsers=1', 'DefaultAllUsersTargetDir="C:\Python"'
 
       - name: Debug
-        run: Get-ChildItem -Path $env:LOCALAPPDATA
+        run: Get-ChildItem -Path C:\
 
       - name: Package Python binaries
         run: |
