@@ -27,7 +27,7 @@ jobs:
         git config user.email "action@github.com"
 
     - name: Debug
-      run: Get-ChildItem -Path "C:\Program Files"
+      run: Get-ChildItem -Path "C:\"
 
     - name: Get Python version
       id: python_version
