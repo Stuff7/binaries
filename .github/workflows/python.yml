@@ -27,7 +27,9 @@ jobs:
         git config user.email "action@github.com"
 
     - name: Debug
-      run: Get-ChildItem -Path C:\ -Recurse
+      run: |
+        Get-ChildItem -Path "C:\Program Files" -Recurse
+        Get-ChildItem -Path "C:\Program Files (x86)" -Recurse
 
     - name: Package Python binaries
       run: |
