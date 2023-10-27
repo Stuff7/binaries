@@ -19,7 +19,7 @@ jobs:
 
     - name: Install Python
       run: |
-        .\python-installer.exe /quiet InstallAllUsers=1 PrependPath=1
+        .\python-installer.exe /quiet InstallAllUsers=1 PrependPath=1 TargetDir=C:\Python312
 
     - name: Set up Git
       run: |
@@ -27,13 +27,12 @@ jobs:
         git config user.email "action@github.com"
 
     - name: Get Python version
-      id: python_version
       run: |
-        python --version
+        C:\Python312\python --version
 
     - name: Package Python binaries
       run: |
-        Compress-Archive -Path "C:\Program Files\Python312" -DestinationPath "python312.zip"
+        Compress-Archive -Path "C:\Python312" -DestinationPath "python312.zip"
 
     - name: Get current date and time
       id: datetime
