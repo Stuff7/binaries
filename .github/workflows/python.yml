@@ -6,60 +6,50 @@ on:
       - master
 
 jobs:
-  install_and_upload:
+  install_python_and_upload:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Download Python installer
-      run: |
-        Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" -OutFile python-installer.exe
+      - name: Download Python Installer
+        run: |
+          Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" -OutFile python-installer.exe
 
-    - name: Install Python
-      run: |
-        .\python-installer.exe /quiet InstallAllUsers=1 PrependPath=1
+      - name: Install Python
+        run: |
+          Start-Process -Wait -FilePath python-installer.exe -ArgumentList '/quiet', 'InstallAllUsers=1', 'DefaultAllUsersTargetDir="C:\Python"'
 
-    - name: Set up Git
-      run: |
-        git config user.name "GitHub Action"
-        git config user.email "action@github.com"
+      - name: Debug
+        run: Get-ChildItem -Path $env:LOCALAPPDATA
 
-    - name: Debug
-      run: Get-ChildItem -Path $env:LOCALAPPDATA
+      - name: Package Python binaries
+        run: |
+          Compress-Archive -Path "C:\Python" -DestinationPath "python-3.12.0.zip"
 
-    - name: Get Python version
-      id: python_version
-      run: |
-        python --version
+      - name: Get current date and time
+        id: datetime
+        run: echo "::set-output name=date::$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 
-    - name: Package Python binaries
-      run: |
-        Compress-Archive -Path "C:\Program Files\Python312" -DestinationPath "python312.zip"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.datetime.outputs.date }}
+          release_name: Python 3.12.0 Release ${{ steps.datetime.outputs.date }}
+          draft: false
+          prerelease: false
 
-    - name: Get current date and time
-      id: datetime
-      run: echo "::set-output name=date::$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.datetime.outputs.date }}
-        release_name: "Python 3.12.0 Release ${{ steps.datetime.outputs.date }}"
-        draft: false
-        prerelease: false
-
-    - name: Upload Python ZIP to Release
-      id: upload_python
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: python312.zip
-        asset_name: python312.zip
-        asset_content_type: application/zip
+      - name: Upload Python ZIP to Release
+        id: upload_python
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: python-3.12.0.zip
+          asset_name: python-3.12.0.zip
+          asset_content_type: application/zip
