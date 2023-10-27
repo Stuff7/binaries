@@ -1,4 +1,4 @@
-name: Install Python on Windows
+name: Install Python 3.12.0 on Windows
 
 on:
   push:
@@ -13,30 +13,30 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Download Python installer
+      run: |
+        Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" -OutFile python-installer.exe
+
+    - name: Install Python
+      run: |
+        .\python-installer.exe /quiet InstallAllUsers=1 PrependPath=1
+
     - name: Set up Git
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
-    - name: Download Python Installer
-      run: |
-        $pythonUrl = "https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe"
-        Invoke-WebRequest -Uri $pythonUrl -OutFile python-installer.exe
+    - name: Debug
+      run: Get-ChildItem -Path "C:\Program Files"
 
-    - name: Install Python
-      run: |
-        Start-Process -Wait -FilePath "python-installer.exe" -ArgumentList "/quiet", "/passive", "/norestart"
-
-    - name: Get Python Version
+    - name: Get Python version
       id: python_version
       run: |
-        python --version | Out-File python_version.txt
-      shell: cmd
+        python --version
 
-    - name: Package Python Binaries
+    - name: Package Python binaries
       run: |
-        Compress-Archive -Path "C:\Program Files\Python" -DestinationPath "python.zip"
-      shell: cmd
+        Compress-Archive -Path "C:\Program Files\Python312" -DestinationPath "python312.zip"
 
     - name: Get current date and time
       id: datetime
@@ -49,7 +49,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.datetime.outputs.date }}
-        release_name: Python Release ${{ steps.datetime.outputs.date }}
+        release_name: "Python 3.12.0 Release ${{ steps.datetime.outputs.date }}"
         draft: false
         prerelease: false
 
@@ -60,6 +60,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: python.zip
-        asset_name: python.zip
+        asset_path: python312.zip
+        asset_name: python312.zip
         asset_content_type: application/zip
