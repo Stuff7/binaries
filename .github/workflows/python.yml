@@ -3,7 +3,7 @@ name: Install Python 3.12.0 on Windows
 on:
   push:
     branches:
-      - master
+      - masters
 
 jobs:
   install_python_and_upload:
