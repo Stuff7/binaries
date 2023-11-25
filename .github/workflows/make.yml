@@ -35,7 +35,7 @@ jobs:
 
       - name: Package Make installation
         run: |
-          $makePath = "C:\Program Files\GNU Make\bin"
+          $makePath = "C:\ProgramData\chocolatey\lib\make\tools"
           Compress-Archive -Path $makePath -DestinationPath "make.zip"
 
       - name: Upload Make ZIP to Release
