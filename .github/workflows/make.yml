@@ -22,21 +22,28 @@ jobs:
         run: |
           choco install make -y
 
+      - name: Get Make version
+        id: make_version
+        run: |
+          $makeVersion = (make --version | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
+          echo "::set-output name=version::$makeVersion"
+
       - name: Create Make Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.MAKE_VERSION }} # Replace with the desired version number
-          release_name: Make Release v${{ env.MAKE_VERSION }}
+          tag_name: v${{ steps.make_version.outputs.version }}
+          release_name: Make Release v${{ steps.make_version.outputs.version }}
           draft: false
           prerelease: false
 
       - name: Package Make installation
         run: |
           $makePath = "C:\ProgramData\chocolatey\lib\make\tools"
-          Compress-Archive -Path $makePath -DestinationPath "make.zip"
+          $zipFileName = "make_v${{ steps.make_version.outputs.version }}.zip"
+          Compress-Archive -Path $makePath -DestinationPath $zipFileName
 
       - name: Upload Make ZIP to Release
         id: upload_make
@@ -45,6 +52,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: make.zip
-          asset_name: make.zip
+          asset_path: make_v${{ steps.make_version.outputs.version }}.zip
+          asset_name: make_v${{ steps.make_version.outputs.version }}.zip
           asset_content_type: application/zip
