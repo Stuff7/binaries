@@ -1,0 +1,50 @@
+name: Install and Release Make for Windows
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  install_and_release_make:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+      - name: Install Make using Chocolatey
+        run: |
+          choco install make -y
+
+      - name: Create Make Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.MAKE_VERSION }} # Replace with the desired version number
+          release_name: Make Release v${{ env.MAKE_VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Package Make installation
+        run: |
+          $makePath = "C:\Program Files\GNU Make\bin"
+          Compress-Archive -Path $makePath -DestinationPath "make.zip"
+
+      - name: Upload Make ZIP to Release
+        id: upload_make
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: make.zip
+          asset_name: make.zip
+          asset_content_type: application/zip
