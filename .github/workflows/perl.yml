@@ -1,0 +1,57 @@
+name: Install and Release Strawberry Perl for Windows
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  install_and_release_strawberry_perl:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+      - name: Install Strawberry Perl using Chocolatey
+        run: |
+          choco install strawberryperl -y
+
+      - name: Get Strawberry Perl version
+        id: strawberry_perl_version
+        run: |
+          $perlVersion = (perl --version | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
+          echo "::set-output name=version::$perlVersion"
+
+      - name: Create Strawberry Perl Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.strawberry_perl_version.outputs.version }}
+          release_name: Strawberry Perl Release v${{ steps.strawberry_perl_version.outputs.version }}
+          draft: false
+          prerelease: false
+
+      - name: Package Strawberry Perl installation
+        run: |
+          $perlPath = "C:\Strawberry\"
+          $zipFileName = "strawberry_perl_v${{ steps.strawberry_perl_version.outputs.version }}.zip"
+          Compress-Archive -Path $perlPath -DestinationPath $zipFileName
+
+      - name: Upload Strawberry Perl ZIP to Release
+        id: upload_strawberry_perl
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: strawberry_perl_v${{ steps.strawberry_perl_version.outputs.version }}.zip
+          asset_name: strawberry_perl_v${{ steps.strawberry_perl_version.outputs.version }}.zip
+          asset_content_type: application/zip
