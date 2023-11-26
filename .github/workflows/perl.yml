@@ -20,7 +20,7 @@ jobs:
 
       - name: Install Strawberry Perl using Chocolatey
         run: |
-          choco install strawberryperl -y
+          choco install strawberryperl -y --force
 
       - name: Get Strawberry Perl version
         id: strawberry_perl_version
