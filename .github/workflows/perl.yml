@@ -38,6 +38,7 @@ jobs:
           release_name: Strawberry Perl Release v${{ steps.strawberry_perl_version.outputs.version }}
           draft: false
           prerelease: false
+          replace: true
 
       - name: Package Strawberry Perl installation
         run: |
