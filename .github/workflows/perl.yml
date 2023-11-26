@@ -18,19 +18,41 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
 
-      - name: Install Strawberry Perl using Chocolatey
-        run: |
-          choco install strawberryperl -y --force
-
       - name: Get Strawberry Perl version
         id: strawberry_perl_version
         run: |
           $perlVersion = (perl --version | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
           echo "::set-output name=version::$perlVersion"
 
+      - name: Check if release already exists
+        id: check_existing_release
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { octokit } = require('@octokit/rest');
+            const { owner, repo } = context.repo;
+            const { data } = await octokit.repos.getReleaseByTag({ owner, repo, tag: 'v' + process.env.VERSION });
+            if (data) {
+              console.log('Release already exists');
+              process.exit(0);
+            }
+            console.log('Release does not exist');
+            process.exit(1);
+
+      - name: Delete existing release
+        if: steps.check_existing_release.outputs.exit-code == '0'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { octokit } = require('@octokit/rest');
+            const { owner, repo } = context.repo;
+            await octokit.repos.deleteRelease({ owner, repo, release_id: context.payload.release.id });
+            console.log('Deleted existing release');
+
       - name: Create Strawberry Perl Release
         id: create_release
         uses: actions/create-release@v1
+        if: steps.check_existing_release.outputs.exit-code == '1'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -38,7 +60,6 @@ jobs:
           release_name: Strawberry Perl Release v${{ steps.strawberry_perl_version.outputs.version }}
           draft: false
           prerelease: false
-          replace: true
 
       - name: Package Strawberry Perl installation
         run: |
