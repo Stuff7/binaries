@@ -3,7 +3,7 @@ name: Install and Release Make for Windows
 on:
   push:
     branches:
-      - master
+      - masters
 
 jobs:
   install_and_release_make:
